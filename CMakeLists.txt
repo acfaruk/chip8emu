@@ -1,12 +1,17 @@
 cmake_minimum_required(VERSION 3.14)
-project("chip8emu")
+project(chip8emu)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-add_executable(chip8emu src/main.cpp)
+file(GLOB_RECURSE SOURCES 
+    src/*.h 
+    src/*.cpp)
+
+add_executable(${PROJECT_NAME} ${SOURCES})
+source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES})
 
 # SDL2
 set(SDL_STATIC_PIC ON CACHE BOOL "Position Independent Code" FORCE)
@@ -19,7 +24,7 @@ FetchContent_GetProperties(sdl2)
 FetchContent_Populate(sdl2)
 add_subdirectory(${sdl2_SOURCE_DIR} ${sdl2_BINARY_DIR})
 
-target_link_libraries(chip8emu SDL2-static SDL2main)
+target_link_libraries(${PROJECT_NAME} SDL2-static SDL2main)
 
 # YAML parser
 set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "Enable yaml-cpp contrib in library" FORCE)
@@ -39,10 +44,10 @@ add_subdirectory(${yaml_cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR})
 
 
 include_directories(${yaml_cpp_SOURCE_DIR}/include)
-target_link_libraries(chip8emu yaml-cpp)
+target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
 
 if (MSVC)
-    set_target_properties(chip8emu PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-    target_compile_options(chip8emu PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+    target_compile_options(${PROJECT_NAME} PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
 endif(MSVC)
