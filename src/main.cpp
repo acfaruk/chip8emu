@@ -1,5 +1,8 @@
 #include <SDL.h>
+#include <yaml-cpp/yaml.h>
+
 #include <iostream>
+#include <string>
 
 int main(int argc, char* argv[]) {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -21,7 +24,11 @@ int main(int argc, char* argv[]) {
 		SDL_Quit();
 		return 1;
 	}
+	
+	YAML::Node config = YAML::LoadFile("C:\\Users\\f_aci\\Desktop\\test.yaml");
 
+	std::cout << config["test"]["test2"].as<std::string>() << std::endl;
+	
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);
 	SDL_Quit();
