@@ -22,7 +22,7 @@ jobs:
       run: cmake -Bbuild
 
     - name: cmake make
-      run: cmake --build build/
+      run: cmake --build build/ --target chip8emu
   
   build-macos:
     runs-on: macos-latest
@@ -37,7 +37,7 @@ jobs:
       run: cmake -Bbuild
 
     - name: cmake make
-      run: cmake --build build/
+      run: cmake --build build/ --target chip8emu
   
   build-windows:
     runs-on: windows-latest
@@ -52,5 +52,5 @@ jobs:
       run: cmake -Bbuild
 
     - name: cmake make
-      run: cmake --build build/
+      run: cmake --build build/ --target chip8emu
 

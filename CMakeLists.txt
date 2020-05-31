@@ -9,7 +9,6 @@ include(FetchContent)
 add_executable(chip8emu src/main.cpp)
 
 # SDL2
-
 set(SDL_STATIC_PIC ON CACHE BOOL "Position Independent Code" FORCE)
 FetchContent_Declare(
     sdl2
@@ -22,8 +21,7 @@ add_subdirectory(${sdl2_SOURCE_DIR} ${sdl2_BINARY_DIR})
 
 target_link_libraries(chip8emu SDL2-static SDL2main)
 
-# YAMP parser
-
+# YAML parser
 set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "Enable yaml-cpp contrib in library" FORCE)
 set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "Enable parse tools" FORCE)
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Tests" FORCE)
