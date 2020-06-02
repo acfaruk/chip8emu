@@ -1,36 +1,31 @@
 #include <SDL.h>
-#include <yaml-cpp/yaml.h>
 
 #include <iostream>
 #include <string>
 
+#include "config.h"
+
+using namespace c8emu;
+
 int main(int argc, char* argv[]) {
-  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-    std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
-    return 1;
+  Config config;
+  if (argc == 1) {
+    config = Config();
+  } else if (argc == 2) {
+    try {
+      config = Config(argv[1]);
+    } catch (std::exception) {
+      std::cout << "The specified configuration file could not be loaded.";
+      return 1;
+    }
+  } else {
+    std::cout << "Only zero or one argument is allowed. Start without arguments to read/create the "
+                 "default config or provide the path to your own config file."
+              << std::endl;
+    return 2;
   }
 
-  SDL_Window* win = SDL_CreateWindow("chip8emu", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
-  if (win == nullptr) {
-    std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-    SDL_Quit();
-    return 1;
-  }
-
-  SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);  // ddddddddddd
-  if (ren == nullptr) {
-    SDL_DestroyWindow(win);
-    std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-    SDL_Quit();
-    return 1;
-  }
-
-  YAML::Node config = YAML::LoadFile("C:\\Users\\f_aci\\Desktop\\test.yaml");
-  std::cout << config["test"]["test2"].as<std::string>() << std::endl;
-
-   SDL_DestroyRenderer(ren);
-  SDL_DestroyWindow(win);
-  SDL_Quit();
+  std::cout << config.Get()["rom"] << std::endl;
 
   return 0;
 }

@@ -1,0 +1,3 @@
+rom: roms/test.rom
+graphics:
+  pixel_multiplier: 10
