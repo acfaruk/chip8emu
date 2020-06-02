@@ -18,11 +18,18 @@ Config::Config() {
 
 Config::Config(const std::string& file_name) { root = YAML::LoadFile(file_name); }
 
-YAML::Node Config::Get() { return root; }
+const Chip8EmuConfig Config::Get() { return root.as<Chip8EmuConfig>(); }
 
 void Config::CreateDefaultConfig() {
-  root["rom"] = "roms/default.rom";
-  root["graphics"]["pixel_multiplier"] = 10;
+  Chip8EmuConfig config;
+
+  DisplayConfig displayConfig;
+  displayConfig.pixel_multiplier = 10;
+  displayConfig.background_color = DisplayColor(0, 0, 0, 255);
+  displayConfig.foreground_color = DisplayColor(255, 255, 255, 255);
+  config.display_config = displayConfig;
+
+  root = config;
 }
 
 }  // namespace c8emu

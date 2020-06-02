@@ -1,3 +1,12 @@
-rom: roms/test.rom
-graphics:
+display:
   pixel_multiplier: 10
+  background_color:
+    - 0
+    - 0
+    - 0
+    - 255
+  foreground_color:
+    - 255
+    - 255
+    - 255
+    - 255
