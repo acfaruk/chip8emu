@@ -1,3 +1,6 @@
+speaker:
+  beep_frequency: 900
+  beep_duration: 100
 display:
   pixel_multiplier: 10
   background_color:

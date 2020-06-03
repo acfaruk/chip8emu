@@ -9,10 +9,11 @@
 #include <string>
 
 namespace c8emu {
-SDL_Speaker::SDL_Speaker() {
+SDL_Speaker::SDL_Speaker(const SpeakerConfig &config) {
   if (SDL_Init(SDL_INIT_AUDIO) != 0) {
     throw std::runtime_error("SDL initialization failed: " + std::string(SDL_GetError()));
   }
+  this->config = config;
 
   SDL_AudioSpec desired_spec;
   desired_spec.freq = playback_frequency;
@@ -32,6 +33,8 @@ SDL_Speaker::SDL_Speaker() {
 }
 
 SDL_Speaker::~SDL_Speaker() { SDL_CloseAudioDevice(device_id); }
+
+void SDL_Speaker::Beep() { Beep(config.beep_frequency, config.beep_duration); }
 
 void SDL_Speaker::Beep(double frequency, int duration) {
   BeepObject new_beep;

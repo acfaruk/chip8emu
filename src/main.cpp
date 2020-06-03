@@ -28,6 +28,7 @@ int main(int argc, char* argv[]) {
     return 2;
   }
 
+  auto test2 = config.Get();
   SDL_Display display = SDL_Display(config.Get().display_config);
 
   std::array<uint8_t, display_size> test;
@@ -41,17 +42,14 @@ int main(int argc, char* argv[]) {
 
   display.SetScreen(test);
 
-  SDL_Speaker speaker = SDL_Speaker();
+  SDL_Speaker speaker = SDL_Speaker(config.Get().speaker_config);
 
-  speaker.Beep(1000, 250);
-  speaker.Beep(2000, 250);
-  speaker.Beep(1000, 250);
-  speaker.Beep(3000, 250);
-  speaker.Beep(2000, 250);
-  speaker.Beep(1000, 250);
-  speaker.Beep(3000, 250);
-  speaker.Beep(3000, 250);
+  speaker.Beep();
+  SDL_Delay(1000);
+  speaker.Beep();
+  SDL_Delay(1000);
+  speaker.Beep();
+  SDL_Delay(1000);
 
-  SDL_Delay(5000);
   return 0;
 }

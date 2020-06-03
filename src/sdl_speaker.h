@@ -3,15 +3,17 @@
 
 #include <queue>
 
+#include "config.h"
 #include "speaker.h"
 
 namespace c8emu {
 class SDL_Speaker : public Speaker {
  public:
-  SDL_Speaker();
+  SDL_Speaker(const SpeakerConfig& config);
   ~SDL_Speaker();
 
   // Inherited via Speaker
+  virtual void Beep() override;
   virtual void Beep(double frequency, int duration) override;
 
  private:
@@ -22,6 +24,8 @@ class SDL_Speaker : public Speaker {
     double frequency;
     int samples_left;
   };
+
+  SpeakerConfig config;
 
   // SDL Audio device id
   SDL_AudioDeviceID device_id;

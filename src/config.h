@@ -16,12 +16,18 @@ struct DisplayColor {
 };
 
 struct DisplayConfig {
-  uint8_t pixel_multiplier;
-  DisplayColor background_color;
-  DisplayColor foreground_color;
+  uint8_t pixel_multiplier = 10;
+  DisplayColor background_color = DisplayColor(0, 0, 0, 255);
+  DisplayColor foreground_color = DisplayColor(255, 255, 255, 255);
+};
+
+struct SpeakerConfig {
+  uint16_t beep_frequency = 900;
+  uint16_t beep_duration = 100;
 };
 
 struct Chip8EmuConfig {
+  SpeakerConfig speaker_config;
   DisplayConfig display_config;
 };
 
@@ -89,21 +95,40 @@ struct convert<c8emu::DisplayConfig> {
 };
 
 template <>
+struct convert<c8emu::SpeakerConfig> {
+  static Node encode(const c8emu::SpeakerConfig& rhs) {
+    Node node;
+    node["beep_frequency"] = (int)rhs.beep_frequency;
+    node["beep_duration"] = (int)rhs.beep_duration;
+    return node;
+  }
+
+  static bool decode(const Node& node, c8emu::SpeakerConfig& rhs) {
+    if (!node.IsMap() || node.size() != 2) {
+      return false;
+    }
+    rhs.beep_frequency = node["beep_frequency"].as<int>();
+    rhs.beep_duration = node["beep_duration"].as<int>();
+    return true;
+  }
+};
+
+template <>
 struct convert<c8emu::Chip8EmuConfig> {
   static Node encode(const c8emu::Chip8EmuConfig& rhs) {
     Node node;
+    node["speaker"] = rhs.speaker_config;
     node["display"] = rhs.display_config;
     return node;
   }
 
   static bool decode(const Node& node, c8emu::Chip8EmuConfig& rhs) {
-    if (!node.IsMap() || node.size() != 1) {
+    if (!node.IsMap() || node.size() != 2) {
       return false;
     }
     rhs.display_config = node["display"].as<c8emu::DisplayConfig>();
-
+    rhs.speaker_config = node["speaker"].as<c8emu::SpeakerConfig>();
     return true;
   }
 };
-
 }  // namespace YAML
