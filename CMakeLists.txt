@@ -15,6 +15,7 @@ source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES})
 
 # SDL2
 set(SDL_STATIC_PIC ON CACHE BOOL "Position Independent Code" FORCE)
+set(WASAPI OFF CACHE BOOL "Use wasapi" FORCE)
 FetchContent_Declare(
     sdl2
     URL https://www.libsdl.org/release/SDL2-2.0.12.tar.gz

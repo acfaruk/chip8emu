@@ -1,15 +1,13 @@
 #include "sdl_display.h"
 
-#include <iostream>
-
 namespace c8emu {
-SDLDisplay::SDLDisplay(const DisplayConfig& config) {
+SDL_Display::SDL_Display(const DisplayConfig& config) {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     throw std::runtime_error("SDL initialization failed: " + std::string(SDL_GetError()));
   }
   InitWindow(config);
 }
-void SDLDisplay::InitWindow(const DisplayConfig& config) {
+void SDL_Display::InitWindow(const DisplayConfig& config) {
   this->config = config;
   window = SDL_CreateWindow("chip8emu", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                             display_width * config.pixel_multiplier,
@@ -32,14 +30,14 @@ void SDLDisplay::InitWindow(const DisplayConfig& config) {
   ClearScreen();
 }
 
-void SDLDisplay::ClearScreen() {
+void SDL_Display::ClearScreen() {
   SDL_SetRenderDrawColor(renderer, config.background_color.r, config.background_color.g,
                          config.background_color.b, config.background_color.a);
 
   SDL_RenderClear(renderer);
 }
 
-void SDLDisplay::SetScreen(const std::array<uint8_t, display_size>& pixel_data) {
+void SDL_Display::SetScreen(const std::array<uint8_t, display_size>& pixel_data) {
   ClearScreen();
 
   int rect_counter = 0;

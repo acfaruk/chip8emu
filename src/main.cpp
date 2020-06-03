@@ -1,11 +1,12 @@
+
 #include <SDL.h>
 
 #include <iostream>
 #include <string>
 
 #include "config.h"
-#include "display.h"
 #include "sdl_display.h"
+#include "sdl_speaker.h"
 
 using namespace c8emu;
 
@@ -27,7 +28,7 @@ int main(int argc, char* argv[]) {
     return 2;
   }
 
-  SDLDisplay display = SDLDisplay(config.Get().display_config);
+  SDL_Display display = SDL_Display(config.Get().display_config);
 
   std::array<uint8_t, display_size> test;
 
@@ -40,7 +41,17 @@ int main(int argc, char* argv[]) {
 
   display.SetScreen(test);
 
-  SDL_Delay(10000);
+  SDL_Speaker speaker = SDL_Speaker();
 
+  speaker.Beep(1000, 250);
+  speaker.Beep(2000, 250);
+  speaker.Beep(1000, 250);
+  speaker.Beep(3000, 250);
+  speaker.Beep(2000, 250);
+  speaker.Beep(1000, 250);
+  speaker.Beep(3000, 250);
+  speaker.Beep(3000, 250);
+
+  SDL_Delay(5000);
   return 0;
 }

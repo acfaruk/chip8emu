@@ -4,9 +4,9 @@
 #include "display.h"
 
 namespace c8emu {
-class SDLDisplay : public Display {
+class SDL_Display : public Display {
  public:
-  SDLDisplay(const DisplayConfig& config);
+  SDL_Display(const DisplayConfig& config);
   // Inherited via Display
   virtual void InitWindow(const DisplayConfig& config) override;
   virtual void ClearScreen() override;
