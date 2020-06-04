@@ -1,3 +1,5 @@
+emulation:
+  path_to_rom: "roms/PONG"
 speaker:
   beep_frequency: 900
   beep_duration: 100

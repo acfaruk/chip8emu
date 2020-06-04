@@ -37,7 +37,7 @@ void SDL_Display::ClearScreen() {
   SDL_RenderClear(renderer);
 }
 
-void SDL_Display::SetScreen(const std::array<uint8_t, DISPLAY_SIZE>& pixel_data) {
+void SDL_Display::SetScreen(const std::array<uint8_t, CHIP8_DISPLAY_SIZE>& pixel_data) {
   ClearScreen();
 
   int rect_counter = 0;

@@ -1,15 +1,22 @@
 
 #include <SDL.h>
 
+#include <fstream>
 #include <iostream>
 #include <string>
 
 #include "config.h"
+#include "sdl_chip8_emulator.h"
 #include "sdl_display.h"
 #include "sdl_input.h"
 #include "sdl_speaker.h"
 
 using namespace c8emu;
+
+uint32_t EmulateCycle(uint32_t interval, void* emulator) {
+  ((Chip8Emulator*)emulator)->EmulateCycle();
+  return interval;
+}
 
 int main(int argc, char* argv[]) {
   Config config;
@@ -29,20 +36,19 @@ int main(int argc, char* argv[]) {
     return 2;
   }
 
-  auto test2 = config.Get();
-  SDL_Display display = SDL_Display(config.Get().display_config);
+  Chip8EmuConfig configuration = config.Get();
 
-  std::array<uint8_t, DISPLAY_SIZE> test;
+  SDL_Display display(configuration.display_config);
+  SDL_Speaker speaker(configuration.speaker_config);
+  SDL_Input input(configuration.input_config);
 
-  for (int i = 0; i < DISPLAY_SIZE; i++) {
-    test[i] = 0;
+  SDL_Chip8Emulator emulator(input, display, speaker, configuration.emulation_config);
+
+  if (SDL_Init(SDL_INIT_TIMER) != 0) {
+    throw std::runtime_error("SDL initialization failed: " + std::string(SDL_GetError()));
   }
 
-  SDL_Speaker speaker = SDL_Speaker(config.Get().speaker_config);
-
-  SDL_Input input(test2.input_config);
-
-  std::array<uint8_t, INPUT_COUNT> input_data;
+  SDL_AddTimer((1 / 500.0) * 1000, EmulateCycle, &emulator);
 
   while (true) {
     // Get the next event
@@ -51,21 +57,11 @@ int main(int argc, char* argv[]) {
     while (SDL_PollEvent(&event) != 0) {
       // User requests quit
       if (event.type == SDL_QUIT) {
+        SDL_Quit();
         return 0;
       }
     }
 
-    input.SetInput(input_data);
-
-    for (int i = 0; i < INPUT_COUNT; i++) {
-      if (input_data[i]) {
-        speaker.Beep();
-        test[i] = 1;
-      } else {
-        test[i] = 0;
-      }
-    }
-    display.SetScreen(test);
     SDL_Delay(50);
   }
 

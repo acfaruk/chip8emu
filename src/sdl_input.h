@@ -8,7 +8,7 @@ class SDL_Input : public Input {
  public:
   SDL_Input(const InputConfig& config) : config(config){};
   // Inherited via Input
-  virtual void SetInput(std::array<uint8_t, INPUT_COUNT>& input) override;
+  virtual void SetInput(std::array<uint8_t, CHIP8_INPUT_COUNT>& input) override;
 
  private:
   InputConfig config;

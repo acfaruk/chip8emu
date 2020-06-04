@@ -29,15 +29,20 @@ struct SpeakerConfig {
 };
 
 struct InputConfig {
-  std::array<std::string, INPUT_COUNT> input_map = {
+  std::array<std::string, CHIP8_INPUT_COUNT> input_map = {
       "Keypad 7", "Keypad 8", "Keypad 9", "d", "Keypad 4", "Keypad 5", "Keypad 6", "f",
       "Keypad 1", "Keypad 2", "Keypad 3", "g", "a",        "Keypad 0", "s",        "h"};
+};
+
+struct EmulationConfig {
+  std::string path_to_rom = "roms/PONG";
 };
 
 struct Chip8EmuConfig {
   SpeakerConfig speaker_config;
   DisplayConfig display_config;
   InputConfig input_config;
+  EmulationConfig emulation_config;
 };
 
 class Config {
@@ -131,11 +136,28 @@ struct convert<c8emu::InputConfig> {
   }
 
   static bool decode(const Node& node, c8emu::InputConfig& rhs) {
-    if (!node.IsSequence() || node.size() != c8emu::INPUT_COUNT) {
+    if (!node.IsSequence() || node.size() != c8emu::CHIP8_INPUT_COUNT) {
       return false;
     }
 
-    rhs.input_map = node.as<std::array<std::string, c8emu::INPUT_COUNT>>();
+    rhs.input_map = node.as<std::array<std::string, c8emu::CHIP8_INPUT_COUNT>>();
+    return true;
+  }
+};
+
+template <>
+struct convert<c8emu::EmulationConfig> {
+  static Node encode(const c8emu::EmulationConfig& rhs) {
+    Node node;
+    node["path_to_rom"] = rhs.path_to_rom;
+    return node;
+  }
+
+  static bool decode(const Node& node, c8emu::EmulationConfig& rhs) {
+    if (!node.IsMap()) {
+      return false;
+    }
+    rhs.path_to_rom = node["path_to_rom"].as<std::string>();
     return true;
   }
 };
@@ -147,6 +169,7 @@ struct convert<c8emu::Chip8EmuConfig> {
     node["speaker"] = rhs.speaker_config;
     node["display"] = rhs.display_config;
     node["input"] = rhs.input_config;
+    node["emulation"] = rhs.emulation_config;
     return node;
   }
 
@@ -157,6 +180,7 @@ struct convert<c8emu::Chip8EmuConfig> {
     rhs.display_config = node["display"].as<c8emu::DisplayConfig>();
     rhs.speaker_config = node["speaker"].as<c8emu::SpeakerConfig>();
     rhs.input_config = node["input"].as<c8emu::InputConfig>();
+    rhs.emulation_config = node["emulation"].as<c8emu::EmulationConfig>();
     return true;
   }
 };
