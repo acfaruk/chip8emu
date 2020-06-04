@@ -6,6 +6,7 @@
 
 #include "config.h"
 #include "sdl_display.h"
+#include "sdl_input.h"
 #include "sdl_speaker.h"
 
 using namespace c8emu;
@@ -31,25 +32,42 @@ int main(int argc, char* argv[]) {
   auto test2 = config.Get();
   SDL_Display display = SDL_Display(config.Get().display_config);
 
-  std::array<uint8_t, display_size> test;
+  std::array<uint8_t, DISPLAY_SIZE> test;
 
-  for (int i = 0; i < display_size; i++) {
+  for (int i = 0; i < DISPLAY_SIZE; i++) {
     test[i] = 0;
   }
 
-  test[30] = 1;
-  test[20 * 64 + 63] = 1;
-
-  display.SetScreen(test);
-
   SDL_Speaker speaker = SDL_Speaker(config.Get().speaker_config);
 
-  speaker.Beep();
-  SDL_Delay(1000);
-  speaker.Beep();
-  SDL_Delay(1000);
-  speaker.Beep();
-  SDL_Delay(1000);
+  SDL_Input input(test2.input_config);
+
+  std::array<uint8_t, INPUT_COUNT> input_data;
+
+  while (true) {
+    // Get the next event
+    SDL_Event event;
+    // Handle events on queue
+    while (SDL_PollEvent(&event) != 0) {
+      // User requests quit
+      if (event.type == SDL_QUIT) {
+        return 0;
+      }
+    }
+
+    input.SetInput(input_data);
+
+    for (int i = 0; i < INPUT_COUNT; i++) {
+      if (input_data[i]) {
+        speaker.Beep();
+        test[i] = 1;
+      } else {
+        test[i] = 0;
+      }
+    }
+    display.SetScreen(test);
+    SDL_Delay(50);
+  }
 
   return 0;
 }

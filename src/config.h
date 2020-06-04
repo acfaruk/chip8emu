@@ -4,6 +4,8 @@
 
 #include <string>
 
+#include "input.h"
+
 namespace c8emu {
 
 static const std::string default_config_file = "config.yml";
@@ -26,9 +28,16 @@ struct SpeakerConfig {
   uint16_t beep_duration = 100;
 };
 
+struct InputConfig {
+  std::array<std::string, INPUT_COUNT> input_map = {
+      "Keypad 7", "Keypad 8", "Keypad 9", "d", "Keypad 4", "Keypad 5", "Keypad 6", "f",
+      "Keypad 1", "Keypad 2", "Keypad 3", "g", "a",        "Keypad 0", "s",        "h"};
+};
+
 struct Chip8EmuConfig {
   SpeakerConfig speaker_config;
   DisplayConfig display_config;
+  InputConfig input_config;
 };
 
 class Config {
@@ -114,20 +123,40 @@ struct convert<c8emu::SpeakerConfig> {
 };
 
 template <>
+struct convert<c8emu::InputConfig> {
+  static Node encode(const c8emu::InputConfig& rhs) {
+    Node node;
+    node = rhs.input_map;
+    return node;
+  }
+
+  static bool decode(const Node& node, c8emu::InputConfig& rhs) {
+    if (!node.IsSequence() || node.size() != c8emu::INPUT_COUNT) {
+      return false;
+    }
+
+    rhs.input_map = node.as<std::array<std::string, c8emu::INPUT_COUNT>>();
+    return true;
+  }
+};
+
+template <>
 struct convert<c8emu::Chip8EmuConfig> {
   static Node encode(const c8emu::Chip8EmuConfig& rhs) {
     Node node;
     node["speaker"] = rhs.speaker_config;
     node["display"] = rhs.display_config;
+    node["input"] = rhs.input_config;
     return node;
   }
 
   static bool decode(const Node& node, c8emu::Chip8EmuConfig& rhs) {
-    if (!node.IsMap() || node.size() != 2) {
+    if (!node.IsMap()) {
       return false;
     }
     rhs.display_config = node["display"].as<c8emu::DisplayConfig>();
     rhs.speaker_config = node["speaker"].as<c8emu::SpeakerConfig>();
+    rhs.input_config = node["input"].as<c8emu::InputConfig>();
     return true;
   }
 };

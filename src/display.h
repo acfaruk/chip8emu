@@ -6,9 +6,9 @@
 
 namespace c8emu {
 
-const int display_width = 64;
-const int display_height = 32;
-const int display_size = display_width * display_height;
+const int DISPLAY_WIDTH = 64;
+const int DISPLAY_HEIGHT = 32;
+const int DISPLAY_SIZE = DISPLAY_WIDTH * DISPLAY_HEIGHT;
 
 // Interface for a chip8 display
 class Display {
@@ -23,6 +23,6 @@ class Display {
 
   // Set the display data, the given array is from left to right and from top to bottom, the values
   // are considered boolean, meaning 0 is white and everything else is black
-  virtual void SetScreen(const std::array<uint8_t, display_size>& pixel_data) = 0;
+  virtual void SetScreen(const std::array<uint8_t, DISPLAY_SIZE>& pixel_data) = 0;
 };
 }  // namespace c8emu

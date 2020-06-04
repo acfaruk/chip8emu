@@ -18,7 +18,7 @@ class SDL_Speaker : public Speaker {
 
  private:
   const int playback_frequency = 44100;
-  const int playback_amplitude = 28000;
+  const int playback_amplitude = 20000;
 
   struct BeepObject {
     double frequency;

@@ -3,13 +3,16 @@ speaker:
   beep_duration: 100
 display:
   pixel_multiplier: 10
-  background_color:
-    - 0
-    - 0
-    - 0
-    - 255
-  foreground_color:
-    - 255
-    - 255
-    - 255
-    - 255
+  background_color: [0, 0, 0, 255]
+  foreground_color: [255, 255, 255, 255]
+input:
+  # Original Keypad of CHIP8, remap them to your keyboard here
+  # Check https://wiki.libsdl.org/SDL_Scancode for available strings
+  # |1|2|3|C|
+  # |4|5|6|D|
+  # |7|8|9|E|
+  # |A|0|B|F|
+  ["Keypad 7", "Keypad 8", "Keypad 9", "d",
+  "Keypad 4", "Keypad 5", "Keypad 6", "f",
+  "Keypad 1", "Keypad 2", "Keypad 3", "g",
+  "a", "Keypad 0", "s", "h"]
