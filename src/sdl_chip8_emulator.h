@@ -4,13 +4,10 @@
 namespace c8emu {
 class SDL_Chip8Emulator : public Chip8Emulator {
  public:
-  SDL_Chip8Emulator(Input& input, Display& display, Speaker& speaker, EmulationConfig& config)
-      : Chip8Emulator(input, display, speaker), config(config) {
-    LoadProgram(config.path_to_rom);
-  }
+  SDL_Chip8Emulator(EmulationConfig& config, Input& input, Display& display, Speaker& speaker);
 
   // Inherited via Chip8Emulator
-  virtual void EmulateCycle() override;
+  virtual void EmulateMillisecond() override;
   virtual void LoadProgram(const std::string& path_to_rom) override;
   virtual void Reset() override;
 

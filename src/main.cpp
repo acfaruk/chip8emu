@@ -1,6 +1,7 @@
 
 #include <SDL.h>
 
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -12,11 +13,6 @@
 #include "sdl_speaker.h"
 
 using namespace c8emu;
-
-uint32_t EmulateCycle(uint32_t interval, void* emulator) {
-  ((Chip8Emulator*)emulator)->EmulateCycle();
-  return interval;
-}
 
 int main(int argc, char* argv[]) {
   Config config;
@@ -42,27 +38,28 @@ int main(int argc, char* argv[]) {
   SDL_Speaker speaker(configuration.speaker_config);
   SDL_Input input(configuration.input_config);
 
-  SDL_Chip8Emulator emulator(input, display, speaker, configuration.emulation_config);
+  SDL_Chip8Emulator emulator(configuration.emulation_config, input, display, speaker);
 
-  if (SDL_Init(SDL_INIT_TIMER) != 0) {
-    throw std::runtime_error("SDL initialization failed: " + std::string(SDL_GetError()));
-  }
-
-  SDL_AddTimer((1 / 500.0) * 1000, EmulateCycle, &emulator);
+  std::chrono::high_resolution_clock clock;
 
   while (true) {
-    // Get the next event
+    auto time = clock.now();
+
     SDL_Event event;
-    // Handle events on queue
     while (SDL_PollEvent(&event) != 0) {
-      // User requests quit
       if (event.type == SDL_QUIT) {
         SDL_Quit();
         return 0;
       }
     }
 
-    SDL_Delay(50);
+    emulator.EmulateMillisecond();
+
+    while (true) {
+      auto new_time = clock.now();
+      long nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(new_time - time).count();
+      if (nanos >= 1000000) break;  // break out off loop after a millisecond
+    }
   }
 
   return 0;

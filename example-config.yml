@@ -1,5 +1,6 @@
 emulation:
-  path_to_rom: "roms/PONG"
+  path_to_rom: "../roms/PONG"
+  clock_ms: 2 # Emulate one cycle every 2ms (500Hz)
 speaker:
   beep_frequency: 900
   beep_duration: 100

@@ -35,7 +35,8 @@ struct InputConfig {
 };
 
 struct EmulationConfig {
-  std::string path_to_rom = "roms/PONG";
+  std::string path_to_rom = "../roms/PONG";
+  int clock_ms = 2;
 };
 
 struct Chip8EmuConfig {
@@ -150,6 +151,7 @@ struct convert<c8emu::EmulationConfig> {
   static Node encode(const c8emu::EmulationConfig& rhs) {
     Node node;
     node["path_to_rom"] = rhs.path_to_rom;
+    node["clock_ms"] = rhs.clock_ms;
     return node;
   }
 
@@ -158,6 +160,7 @@ struct convert<c8emu::EmulationConfig> {
       return false;
     }
     rhs.path_to_rom = node["path_to_rom"].as<std::string>();
+    rhs.clock_ms = node["clock_ms"].as<int>();
     return true;
   }
 };

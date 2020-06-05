@@ -15,10 +15,10 @@ class Chip8Emulator {
       : input(input), display(display), speaker(speaker){};
   virtual ~Chip8Emulator() {}
 
-  // Emulate one cycle of the chip
-  virtual void EmulateCycle() = 0;
+  // Call this method every millisecond for the simulation to work
+  virtual void EmulateMillisecond() = 0;
 
-  // Load a program into the memory
+  // Load a program into the memory (reseting the system)
   virtual void LoadProgram(const std::string& path_to_rom) = 0;
 
   // Reset the chip to default state
