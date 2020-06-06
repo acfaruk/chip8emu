@@ -8,6 +8,8 @@ namespace c8emu {
 const int CHIP8_MEMORY_SIZE = 4096;
 const int CHIP8_V_REGISTER_COUNT = 16;
 const int CHIP8_STACK_SIZE = 16;
+const int CHIP8_FONTSET_SIZE = 80;
+const int CHIP8_PROGRAM_START_LOCATION = 0x200;
 
 class Chip8Emulator {
  public:

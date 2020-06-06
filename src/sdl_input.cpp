@@ -6,7 +6,7 @@
 
 namespace c8emu {
 void SDL_Input::SetInput(std::array<uint8_t, CHIP8_INPUT_COUNT>& input) {
-  SDL_PumpEvents();
+  // SDL_PumpEvents();
   const uint8_t* state = SDL_GetKeyboardState(nullptr);
 
   for (int i = 0; i < CHIP8_INPUT_COUNT; i++) {

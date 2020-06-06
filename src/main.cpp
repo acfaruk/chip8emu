@@ -57,7 +57,8 @@ int main(int argc, char* argv[]) {
 
     while (true) {
       auto new_time = clock.now();
-      long nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(new_time - time).count();
+      long long nanos =
+          std::chrono::duration_cast<std::chrono::nanoseconds>(new_time - time).count();
       if (nanos >= 1000000) break;  // break out off loop after a millisecond
     }
   }

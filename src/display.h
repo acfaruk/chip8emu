@@ -6,9 +6,9 @@
 
 namespace c8emu {
 
-const int DISPLAY_WIDTH = 64;
-const int DISPLAY_HEIGHT = 32;
-const int CHIP8_DISPLAY_SIZE = DISPLAY_WIDTH * DISPLAY_HEIGHT;
+const int CHIP8_DISPLAY_WIDTH = 64;
+const int CHIP8_DISPLAY_HEIGHT = 32;
+const int CHIP8_DISPLAY_SIZE = CHIP8_DISPLAY_WIDTH * CHIP8_DISPLAY_HEIGHT;
 
 // Interface for a chip8 display
 class Display {

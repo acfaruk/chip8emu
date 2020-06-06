@@ -10,8 +10,8 @@ SDL_Display::SDL_Display(const DisplayConfig& config) {
 void SDL_Display::InitWindow(const DisplayConfig& config) {
   this->config = config;
   window = SDL_CreateWindow("chip8emu", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                            DISPLAY_WIDTH * config.pixel_multiplier,
-                            DISPLAY_HEIGHT * config.pixel_multiplier, SDL_WINDOW_SHOWN);
+                            CHIP8_DISPLAY_WIDTH * config.pixel_multiplier,
+                            CHIP8_DISPLAY_HEIGHT * config.pixel_multiplier, SDL_WINDOW_SHOWN);
 
   if (window == nullptr) {
     std::string error = SDL_GetError();
