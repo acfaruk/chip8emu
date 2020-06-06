@@ -30,15 +30,18 @@ void SDL_Display::InitWindow(const DisplayConfig& config) {
   ClearScreen();
 }
 
-void SDL_Display::ClearScreen() {
+void SDL_Display::ClearScreen(bool force_redraw) {
   SDL_SetRenderDrawColor(renderer, config.background_color.r, config.background_color.g,
                          config.background_color.b, config.background_color.a);
 
   SDL_RenderClear(renderer);
+  if (force_redraw) {
+    SDL_RenderPresent(renderer);
+  }
 }
 
 void SDL_Display::SetScreen(const std::array<uint8_t, CHIP8_DISPLAY_SIZE>& pixel_data) {
-  ClearScreen();
+  ClearScreen(false);
 
   int rect_counter = 0;
   for (int i = 0; i < pixel_data.size(); i++) {

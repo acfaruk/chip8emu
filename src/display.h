@@ -19,7 +19,7 @@ class Display {
   virtual void InitWindow(const DisplayConfig& config) = 0;
 
   // Clears the screen with the background color
-  virtual void ClearScreen() = 0;
+  virtual void ClearScreen(bool force_redraw = true) = 0;
 
   // Set the display data, the given array is from left to right and from top to bottom, the values
   // are considered boolean, meaning 0 is white and everything else is black

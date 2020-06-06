@@ -9,8 +9,9 @@ class SDL_Display : public Display {
   SDL_Display(const DisplayConfig& config);
   // Inherited via Display
   virtual void InitWindow(const DisplayConfig& config) override;
-  virtual void ClearScreen() override;
+  virtual void ClearScreen(bool force_redraw = true) override;
   virtual void SetScreen(const std::array<uint8_t, CHIP8_DISPLAY_SIZE>& pixel_data) override;
+
 
  private:
   DisplayConfig config;

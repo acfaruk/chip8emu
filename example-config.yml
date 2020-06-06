@@ -1,21 +1,17 @@
 emulation:
   path_to_rom: "../roms/INVADERS"
-  clock_ms: 2 # Emulate one cycle every 2ms (500Hz)
+  clock_ms: 2 # Emulate one cycle every 2ms
 speaker:
   beep_frequency: 900
   beep_duration: 100
 display:
-  pixel_multiplier: 10
+  pixel_multiplier: 16
   background_color: [0, 0, 0, 255]
   foreground_color: [255, 255, 255, 255]
 input:
-  # Original Keypad of CHIP8, remap them to your keyboard here
+  # The order is based on the hex value, meaning if you want to change
+  # the button 0, you need to change the first value in the list
   # Check https://wiki.libsdl.org/SDL_Scancode for available strings
-  # |1|2|3|C|
-  # |4|5|6|D|
-  # |7|8|9|E|
-  # |A|0|B|F|
-  ["Keypad 7", "Keypad 8", "Keypad 9", "d",
-  "Keypad 4", "Keypad 5", "Keypad 6", "f",
-  "Keypad 1", "Keypad 2", "Keypad 3", "g",
-  "a", "Keypad 0", "s", "h"]
+  ["Keypad 0", "Keypad 7", "Keypad 8", "Keypad 9",
+  "Keypad 4", "Keypad 5", "Keypad 6", "Keypad 1",
+  "Keypad 2", "Keypad 3", "a", "b", "c", "d", "e", "f"]
