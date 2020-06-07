@@ -12,7 +12,6 @@ class SDL_Display : public Display {
   virtual void ClearScreen(bool force_redraw = true) override;
   virtual void SetScreen(const std::array<uint8_t, CHIP8_DISPLAY_SIZE>& pixel_data) override;
 
-
  private:
   DisplayConfig config;
 
