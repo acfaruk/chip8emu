@@ -23,9 +23,7 @@ FetchContent_Declare(
 FetchContent_GetProperties(sdl2)
 
 FetchContent_Populate(sdl2)
-add_subdirectory(${sdl2_SOURCE_DIR} ${sdl2_BINARY_DIR})
-
-target_link_libraries(${PROJECT_NAME} SDL2-static SDL2main)
+add_subdirectory(${sdl2_SOURCE_DIR} ${sdl2_BINARY_DIR} EXCLUDE_FROM_ALL)
 
 # YAML parser
 set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "Enable yaml-cpp contrib in library" FORCE)
@@ -41,12 +39,11 @@ FetchContent_Declare(
 FetchContent_GetProperties(yaml_cpp)
 
 FetchContent_Populate(yaml_cpp)
-add_subdirectory(${yaml_cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR})
-
-
+add_subdirectory(${yaml_cpp_SOURCE_DIR} ${yaml_cpp_BINARY_DIR} EXCLUDE_FROM_ALL)
 include_directories(${yaml_cpp_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
+
+target_link_libraries(${PROJECT_NAME} SDL2-static SDL2main yaml-cpp)
 
 if (MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
