@@ -1,19 +1,46 @@
 #pragma once
-#include "chip8_emulator.h"
+#include <array>
+#include <string>
+
+#include "display.h"
+#include "input.h"
+#include "speaker.h"
 
 namespace c8emu {
-class SDL_Chip8Emulator : public Chip8Emulator {
- public:
-  SDL_Chip8Emulator(EmulationConfig& config, Input& input, Display& display, Speaker& speaker);
 
-  // Inherited via Chip8Emulator
-  virtual void EmulateMillisecond() override;
-  virtual void LoadProgram(const std::string& path_to_rom) override;
-  virtual void Reset() override;
+const int CHIP8_MEMORY_SIZE = 4096;
+const int CHIP8_V_REGISTER_COUNT = 16;
+const int CHIP8_STACK_SIZE = 16;
+const int CHIP8_FONTSET_SIZE = 80;
+const int CHIP8_PROGRAM_START_LOCATION = 0x200;
+
+struct EmulationConfig {
+  std::string path_to_rom = "../roms/PONG";
+  int clock_ms = 2;
+};
+
+class Chip8Emulator {
+ public:
+  Chip8Emulator(EmulationConfig& config, Input& input, Display& display, Speaker& speaker);
+  ~Chip8Emulator() {}
+
+  // Call this method every millisecond for the simulation to work
+  void EmulateMillisecond();
+
+  // Load a program into the memory (reseting the system)
+  void LoadProgram(const std::string& path_to_rom);
+
+  // Reset the chip to default state
+  void Reset();
 
  private:
   void EmulateCycle();
   void FetchOperation();
+
+  Input& input;
+  Display& display;
+  Speaker& speaker;
+  EmulationConfig& config;
 
   // Operations
   void OpNull();
@@ -60,23 +87,22 @@ class SDL_Chip8Emulator : public Chip8Emulator {
   void OpFX55();
   void OpFX65();
 
-  void (SDL_Chip8Emulator::*Chip8MainOps[16])() = {
-      &SDL_Chip8Emulator::Op0___, &SDL_Chip8Emulator::Op1NNN, &SDL_Chip8Emulator::Op2NNN,
-      &SDL_Chip8Emulator::Op3XNN, &SDL_Chip8Emulator::Op4XNN, &SDL_Chip8Emulator::Op5XY0,
-      &SDL_Chip8Emulator::Op6XNN, &SDL_Chip8Emulator::Op7XNN, &SDL_Chip8Emulator::Op8___,
-      &SDL_Chip8Emulator::Op9XY0, &SDL_Chip8Emulator::OpANNN, &SDL_Chip8Emulator::OpBNNN,
-      &SDL_Chip8Emulator::OpCXNN, &SDL_Chip8Emulator::OpDXYN, &SDL_Chip8Emulator::OpE___,
-      &SDL_Chip8Emulator::OpF___};
+  void (Chip8Emulator::*Chip8MainOps[16])() = {
+      &Chip8Emulator::Op0___, &Chip8Emulator::Op1NNN, &Chip8Emulator::Op2NNN,
+      &Chip8Emulator::Op3XNN, &Chip8Emulator::Op4XNN, &Chip8Emulator::Op5XY0,
+      &Chip8Emulator::Op6XNN, &Chip8Emulator::Op7XNN, &Chip8Emulator::Op8___,
+      &Chip8Emulator::Op9XY0, &Chip8Emulator::OpANNN, &Chip8Emulator::OpBNNN,
+      &Chip8Emulator::OpCXNN, &Chip8Emulator::OpDXYN, &Chip8Emulator::OpE___,
+      &Chip8Emulator::OpF___};
 
-  void (SDL_Chip8Emulator::*Chip8ArithmethicOps[16])() = {
-      &SDL_Chip8Emulator::Op8XY0, &SDL_Chip8Emulator::Op8XY1, &SDL_Chip8Emulator::Op8XY2,
-      &SDL_Chip8Emulator::Op8XY3, &SDL_Chip8Emulator::Op8XY4, &SDL_Chip8Emulator::Op8XY5,
-      &SDL_Chip8Emulator::Op8XY6, &SDL_Chip8Emulator::Op8XY7, &SDL_Chip8Emulator::OpNull,
-      &SDL_Chip8Emulator::OpNull, &SDL_Chip8Emulator::OpNull, &SDL_Chip8Emulator::OpNull,
-      &SDL_Chip8Emulator::OpNull, &SDL_Chip8Emulator::OpNull, &SDL_Chip8Emulator::Op8XYE,
-      &SDL_Chip8Emulator::OpNull};
+  void (Chip8Emulator::*Chip8ArithmethicOps[16])() = {
+      &Chip8Emulator::Op8XY0, &Chip8Emulator::Op8XY1, &Chip8Emulator::Op8XY2,
+      &Chip8Emulator::Op8XY3, &Chip8Emulator::Op8XY4, &Chip8Emulator::Op8XY5,
+      &Chip8Emulator::Op8XY6, &Chip8Emulator::Op8XY7, &Chip8Emulator::OpNull,
+      &Chip8Emulator::OpNull, &Chip8Emulator::OpNull, &Chip8Emulator::OpNull,
+      &Chip8Emulator::OpNull, &Chip8Emulator::OpNull, &Chip8Emulator::Op8XYE,
+      &Chip8Emulator::OpNull};
 
-  EmulationConfig config;
   int milliseconds_counter;
 
   uint16_t current_operation;

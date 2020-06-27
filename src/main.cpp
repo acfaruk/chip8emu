@@ -7,10 +7,6 @@
 #include <string>
 
 #include "config.h"
-#include "sdl_chip8_emulator.h"
-#include "sdl_display.h"
-#include "sdl_input.h"
-#include "sdl_speaker.h"
 
 using namespace c8emu;
 
@@ -34,11 +30,11 @@ int main(int argc, char* argv[]) {
 
   Chip8EmuConfig configuration = config.Get();
 
-  SDL_Display display(configuration.display_config);
-  SDL_Speaker speaker(configuration.speaker_config);
-  SDL_Input input(configuration.input_config);
+  Display display(configuration.display_config);
+  Speaker speaker(configuration.speaker_config);
+  Input input(configuration.input_config);
 
-  SDL_Chip8Emulator emulator(configuration.emulation_config, input, display, speaker);
+  Chip8Emulator emulator(configuration.emulation_config, input, display, speaker);
 
   std::chrono::high_resolution_clock clock;
 

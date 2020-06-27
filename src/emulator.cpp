@@ -1,4 +1,4 @@
-#include "sdl_chip8_emulator.h"
+#include "emulator.h"
 
 #include <SDL.h>
 
@@ -8,14 +8,14 @@
 
 namespace c8emu {
 
-SDL_Chip8Emulator::SDL_Chip8Emulator(EmulationConfig& config, Input& input, Display& display,
-                                     Speaker& speaker)
-    : config(config), Chip8Emulator(input, display, speaker) {
+Chip8Emulator::Chip8Emulator(EmulationConfig& config, Input& input, Display& display,
+                             Speaker& speaker)
+    : config(config), input(input), display(display), speaker(speaker) {
   Reset();
   LoadProgram(config.path_to_rom);
 }
 
-void SDL_Chip8Emulator::EmulateMillisecond() {
+void Chip8Emulator::EmulateMillisecond() {
   if (milliseconds_counter % config.clock_ms == 0) {
     EmulateCycle();
   }
@@ -33,7 +33,7 @@ void SDL_Chip8Emulator::EmulateMillisecond() {
   milliseconds_counter++;
 }
 
-void SDL_Chip8Emulator::LoadProgram(const std::string& path_to_rom) {
+void Chip8Emulator::LoadProgram(const std::string& path_to_rom) {
   std::ifstream rom(path_to_rom, std::ios_base::binary);
 
   // read rom
@@ -44,7 +44,7 @@ void SDL_Chip8Emulator::LoadProgram(const std::string& path_to_rom) {
     }
   }
 }
-void SDL_Chip8Emulator::Reset() {
+void Chip8Emulator::Reset() {
   program_counter = CHIP8_PROGRAM_START_LOCATION;
 
   milliseconds_counter = 0;
@@ -67,21 +67,21 @@ void SDL_Chip8Emulator::Reset() {
   std::copy_n(font_set.begin(), font_set.size(), memory.begin());
 }
 
-void SDL_Chip8Emulator::EmulateCycle() {
+void Chip8Emulator::EmulateCycle() {
   FetchOperation();
 
   // Run Current Operation
   (this->*(Chip8MainOps[(current_operation & 0xF000) >> 12]))();
 }
 
-void SDL_Chip8Emulator::FetchOperation() {
+void Chip8Emulator::FetchOperation() {
   current_operation = (memory[program_counter] << 8) + memory[program_counter + 1];
   // std::cout << std::hex << current_operation << "\n";
 }
 
-void SDL_Chip8Emulator::OpNull() {}
+void Chip8Emulator::OpNull() {}
 
-void SDL_Chip8Emulator::Op0___() {
+void Chip8Emulator::Op0___() {
   switch (current_operation) {
     case 0x00E0:
       return Op00E0();
@@ -92,27 +92,27 @@ void SDL_Chip8Emulator::Op0___() {
   }
 }
 
-void SDL_Chip8Emulator::Op0NNN() {}
+void Chip8Emulator::Op0NNN() {}
 
-void SDL_Chip8Emulator::Op00E0() {
+void Chip8Emulator::Op00E0() {
   display_data.fill(0);
   display.SetScreen(display_data);
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op00EE() {
+void Chip8Emulator::Op00EE() {
   stack_pointer--;
   program_counter = stack[stack_pointer];
 
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op1NNN() {
+void Chip8Emulator::Op1NNN() {
   uint16_t nnn = current_operation & 0x0FFF;
   program_counter = nnn;
 }
 
-void SDL_Chip8Emulator::Op2NNN() {
+void Chip8Emulator::Op2NNN() {
   uint16_t nnn = current_operation & 0x0FFF;
 
   stack[stack_pointer] = program_counter;
@@ -121,7 +121,7 @@ void SDL_Chip8Emulator::Op2NNN() {
   program_counter = nnn;
 }
 
-void SDL_Chip8Emulator::Op3XNN() {
+void Chip8Emulator::Op3XNN() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t nn = (current_operation & 0x00FF);
 
@@ -132,7 +132,7 @@ void SDL_Chip8Emulator::Op3XNN() {
   }
 }
 
-void SDL_Chip8Emulator::Op4XNN() {
+void Chip8Emulator::Op4XNN() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t nn = (current_operation & 0x00FF);
 
@@ -143,7 +143,7 @@ void SDL_Chip8Emulator::Op4XNN() {
   }
 }
 
-void SDL_Chip8Emulator::Op5XY0() {
+void Chip8Emulator::Op5XY0() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
 
@@ -154,7 +154,7 @@ void SDL_Chip8Emulator::Op5XY0() {
   }
 }
 
-void SDL_Chip8Emulator::Op6XNN() {
+void Chip8Emulator::Op6XNN() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t nn = (current_operation & 0x00FF);
   v_register[x] = nn;
@@ -162,7 +162,7 @@ void SDL_Chip8Emulator::Op6XNN() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op7XNN() {
+void Chip8Emulator::Op7XNN() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t nn = (current_operation & 0x00FF);
 
@@ -171,12 +171,12 @@ void SDL_Chip8Emulator::Op7XNN() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8___() {
+void Chip8Emulator::Op8___() {
   // Run arithmetic operation
   (this->*(Chip8ArithmethicOps[(current_operation & 0x000F)]))();
 }
 
-void SDL_Chip8Emulator::Op8XY0() {
+void Chip8Emulator::Op8XY0() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
   v_register[x] = v_register[y];
@@ -184,7 +184,7 @@ void SDL_Chip8Emulator::Op8XY0() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XY1() {
+void Chip8Emulator::Op8XY1() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
   v_register[x] |= v_register[y];
@@ -192,7 +192,7 @@ void SDL_Chip8Emulator::Op8XY1() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XY2() {
+void Chip8Emulator::Op8XY2() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
   v_register[x] &= v_register[y];
@@ -200,7 +200,7 @@ void SDL_Chip8Emulator::Op8XY2() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XY3() {
+void Chip8Emulator::Op8XY3() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
   v_register[x] ^= v_register[y];
@@ -208,7 +208,7 @@ void SDL_Chip8Emulator::Op8XY3() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XY4() {
+void Chip8Emulator::Op8XY4() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
 
@@ -222,7 +222,7 @@ void SDL_Chip8Emulator::Op8XY4() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XY5() {
+void Chip8Emulator::Op8XY5() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
 
@@ -236,7 +236,7 @@ void SDL_Chip8Emulator::Op8XY5() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XY6() {
+void Chip8Emulator::Op8XY6() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
 
@@ -246,7 +246,7 @@ void SDL_Chip8Emulator::Op8XY6() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XY7() {
+void Chip8Emulator::Op8XY7() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
 
@@ -260,7 +260,7 @@ void SDL_Chip8Emulator::Op8XY7() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op8XYE() {
+void Chip8Emulator::Op8XYE() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
   v_register[0xF] = v_register[x] >> 7;
@@ -269,7 +269,7 @@ void SDL_Chip8Emulator::Op8XYE() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::Op9XY0() {
+void Chip8Emulator::Op9XY0() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
 
@@ -280,18 +280,18 @@ void SDL_Chip8Emulator::Op9XY0() {
   }
 }
 
-void SDL_Chip8Emulator::OpANNN() {
+void Chip8Emulator::OpANNN() {
   uint16_t nnn = current_operation & 0x0FFF;
   index_register = nnn;
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpBNNN() {
+void Chip8Emulator::OpBNNN() {
   uint16_t nnn = current_operation & 0x0FFF;
   program_counter = v_register[0] + nnn;
 }
 
-void SDL_Chip8Emulator::OpCXNN() {
+void Chip8Emulator::OpCXNN() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t nn = (current_operation & 0x00FF);
 
@@ -300,7 +300,7 @@ void SDL_Chip8Emulator::OpCXNN() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpDXYN() {
+void Chip8Emulator::OpDXYN() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   uint8_t y = (current_operation & 0x00F0) >> 4;
   uint8_t n = (current_operation & 0x000F);
@@ -332,7 +332,7 @@ void SDL_Chip8Emulator::OpDXYN() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpE___() {
+void Chip8Emulator::OpE___() {
   switch (current_operation & 0x00FF) {
     case 0x9E:
       return OpEX9E();
@@ -343,7 +343,7 @@ void SDL_Chip8Emulator::OpE___() {
   }
 }
 
-void SDL_Chip8Emulator::OpEX9E() {
+void Chip8Emulator::OpEX9E() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
 
   input.SetInput(input_data);
@@ -355,7 +355,7 @@ void SDL_Chip8Emulator::OpEX9E() {
   }
 }
 
-void SDL_Chip8Emulator::OpEXA1() {
+void Chip8Emulator::OpEXA1() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
 
   input.SetInput(input_data);
@@ -367,7 +367,7 @@ void SDL_Chip8Emulator::OpEXA1() {
   }
 }
 
-void SDL_Chip8Emulator::OpF___() {
+void Chip8Emulator::OpF___() {
   switch (current_operation & 0x00FF) {
     case 0x07:
       return OpFX07();
@@ -392,14 +392,14 @@ void SDL_Chip8Emulator::OpF___() {
   }
 }
 
-void SDL_Chip8Emulator::OpFX07() {
+void Chip8Emulator::OpFX07() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   v_register[x] = delay_timer;
 
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpFX0A() {
+void Chip8Emulator::OpFX0A() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
 
   input.SetInput(input_data);
@@ -411,21 +411,21 @@ void SDL_Chip8Emulator::OpFX0A() {
   }
 }
 
-void SDL_Chip8Emulator::OpFX15() {
+void Chip8Emulator::OpFX15() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   delay_timer = v_register[x];
 
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpFX18() {
+void Chip8Emulator::OpFX18() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   sound_timer = v_register[x];
 
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpFX1E() {
+void Chip8Emulator::OpFX1E() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   if (index_register + v_register[x] > 0xFFF) {
     v_register[0xF] = 1;
@@ -437,14 +437,14 @@ void SDL_Chip8Emulator::OpFX1E() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpFX29() {
+void Chip8Emulator::OpFX29() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   index_register = v_register[x] * 0x5;
 
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpFX33() {
+void Chip8Emulator::OpFX33() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
   memory[index_register] = v_register[x] / 100;
   memory[index_register + 1] = (v_register[x] / 10) % 10;
@@ -453,7 +453,7 @@ void SDL_Chip8Emulator::OpFX33() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpFX55() {
+void Chip8Emulator::OpFX55() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
 
   std::copy_n(v_register.begin(), x + 1, memory.begin() + index_register);
@@ -464,7 +464,7 @@ void SDL_Chip8Emulator::OpFX55() {
   program_counter += 2;
 }
 
-void SDL_Chip8Emulator::OpFX65() {
+void Chip8Emulator::OpFX65() {
   uint8_t x = (current_operation & 0x0F00) >> 8;
 
   std::copy_n(memory.begin() + index_register, x + 1, v_register.begin());

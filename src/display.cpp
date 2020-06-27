@@ -1,14 +1,16 @@
-#include "sdl_display.h"
+#include "display.h"
+
+#include <stdexcept>
+#include <string>
 
 namespace c8emu {
-SDL_Display::SDL_Display(const DisplayConfig& config) {
+Display::Display(DisplayConfig& config) : config(config) {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     throw std::runtime_error("SDL initialization failed: " + std::string(SDL_GetError()));
   }
-  InitWindow(config);
+  InitWindow();
 }
-void SDL_Display::InitWindow(const DisplayConfig& config) {
-  this->config = config;
+void Display::InitWindow() {
   window = SDL_CreateWindow("chip8emu", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                             CHIP8_DISPLAY_WIDTH * config.pixel_multiplier,
                             CHIP8_DISPLAY_HEIGHT * config.pixel_multiplier, SDL_WINDOW_SHOWN);
@@ -30,7 +32,7 @@ void SDL_Display::InitWindow(const DisplayConfig& config) {
   ClearScreen();
 }
 
-void SDL_Display::ClearScreen(bool force_redraw) {
+void Display::ClearScreen(bool force_redraw) {
   SDL_SetRenderDrawColor(renderer, config.background_color.r, config.background_color.g,
                          config.background_color.b, config.background_color.a);
 
@@ -40,7 +42,7 @@ void SDL_Display::ClearScreen(bool force_redraw) {
   }
 }
 
-void SDL_Display::SetScreen(const std::array<uint8_t, CHIP8_DISPLAY_SIZE>& pixel_data) {
+void Display::SetScreen(const std::array<uint8_t, CHIP8_DISPLAY_SIZE>& pixel_data) {
   ClearScreen(false);
 
   int rect_counter = 0;

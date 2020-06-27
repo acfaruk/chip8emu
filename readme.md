@@ -6,7 +6,6 @@
 - Configurable with a simple yaml file. (check example config)
 - Code Generated Sound
 - Function pointers for most instructions.
-- Composable code structure, to allow new backends for sound, display or input
 - Included are some ROMs that are under the public domain.
 
 The following links helped me, when programming this emulator:

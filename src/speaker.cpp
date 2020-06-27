@@ -1,6 +1,8 @@
 
-#include "sdl_speaker.h"
 
+#include "speaker.h"
+
+#include <SDL.h>
 #include <SDL_audio.h>
 
 #include <algorithm>
@@ -9,7 +11,7 @@
 #include <string>
 
 namespace c8emu {
-SDL_Speaker::SDL_Speaker(const SpeakerConfig &config) : config(config) {
+Speaker::Speaker(SpeakerConfig &config) : config(config) {
   if (SDL_Init(SDL_INIT_AUDIO) != 0) {
     throw std::runtime_error("SDL initialization failed: " + std::string(SDL_GetError()));
   }
@@ -31,11 +33,11 @@ SDL_Speaker::SDL_Speaker(const SpeakerConfig &config) : config(config) {
   SDL_PauseAudioDevice(device_id, 0);
 }
 
-SDL_Speaker::~SDL_Speaker() { SDL_CloseAudioDevice(device_id); }
+Speaker::~Speaker() { SDL_CloseAudioDevice(device_id); }
 
-void SDL_Speaker::Beep() { Beep(config.beep_frequency, config.beep_duration); }
+void Speaker::Beep() { Beep(config.beep_frequency, config.beep_duration); }
 
-void SDL_Speaker::Beep(double frequency, int duration) {
+void Speaker::Beep(double frequency, int duration) {
   BeepObject new_beep;
   new_beep.frequency = frequency;
   new_beep.samples_left = duration * playback_frequency / 1000;
@@ -45,10 +47,10 @@ void SDL_Speaker::Beep(double frequency, int duration) {
   SDL_UnlockAudioDevice(device_id);
 }
 
-void SDL_Speaker::FillSamples(void *object, uint8_t *stream, int stream_length) {
+void Speaker::FillSamples(void *object, uint8_t *stream, int stream_length) {
   int length = stream_length / 2;
   int16_t *audio_stream = (int16_t *)stream;
-  SDL_Speaker *speaker = (SDL_Speaker *)object;
+  Speaker *speaker = (Speaker *)object;
 
   int i = 0;
   while (i < length) {

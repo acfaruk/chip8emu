@@ -2,42 +2,17 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include <array>
 #include <string>
 
+#include "display.h"
+#include "emulator.h"
 #include "input.h"
+#include "speaker.h"
 
 namespace c8emu {
 
 static const std::string default_config_file = "config.yml";
-
-// Configuration Structs
-struct DisplayColor {
-  DisplayColor(){};
-  DisplayColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r), g(g), b(b), a(a) {}
-  uint8_t r = 0, g = 0, b = 0, a = 0;
-};
-
-struct DisplayConfig {
-  uint8_t pixel_multiplier = 10;
-  DisplayColor background_color = DisplayColor(0, 0, 0, 255);
-  DisplayColor foreground_color = DisplayColor(255, 255, 255, 255);
-};
-
-struct SpeakerConfig {
-  uint16_t beep_frequency = 900;
-  uint16_t beep_duration = 100;
-};
-
-struct InputConfig {
-  std::array<std::string, CHIP8_INPUT_COUNT> input_map = {
-      "Keypad 7", "Keypad 8", "Keypad 9", "d", "Keypad 4", "Keypad 5", "Keypad 6", "f",
-      "Keypad 1", "Keypad 2", "Keypad 3", "g", "a",        "Keypad 0", "s",        "h"};
-};
-
-struct EmulationConfig {
-  std::string path_to_rom = "../roms/PONG";
-  int clock_ms = 2;
-};
 
 struct Chip8EmuConfig {
   SpeakerConfig speaker_config;

@@ -1,11 +1,11 @@
-#include "sdl_input.h"
+#include "input.h"
 
 #include <SDL.h>
 
 #include <iostream>
 
 namespace c8emu {
-void SDL_Input::SetInput(std::array<uint8_t, CHIP8_INPUT_COUNT>& input) {
+void Input::SetInput(std::array<uint8_t, CHIP8_INPUT_COUNT>& input) {
   // SDL_PumpEvents();
   const uint8_t* state = SDL_GetKeyboardState(nullptr);
 
